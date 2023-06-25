@@ -12,11 +12,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.proyectomealseapp.data.model.Category
 import com.skydoves.landscapist.coil.CoilImage
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,65 +33,47 @@ import com.example.proyectomealseapp.data.remote.ApiClient
 @Composable
 fun MealSeappList(){
 
-
-    val mealseapplist = remember {
-        mutableStateOf(listOf<MealSeapp>())
+    var category: Category by remember {
+        mutableStateOf(Category(emptyList()))
     }
+
 
     val mealSeappInterface = ApiClient.getListMealSeapp()
 
     val getMealSeapp= mealSeappInterface.getMealSeappInterface()
 
+    getMealSeapp.enqueue(object : Callback<Category> {
 
-    getMealSeapp.enqueue(object : Callback<List<MealSeapp>> {
-        override fun onResponse(
-            call: Call<List<MealSeapp>>,
-            response: Response<List<MealSeapp>>
-        ) {
+
+        override fun onResponse(call: Call<Category>, response: Response<Category>) {
             if(response.isSuccessful){
-                mealseapplist.value=response.body()!!
+                category = response.body()!!
+            Log.e("Data", category.toString())
             }
         }
 
-        override fun onFailure(call: Call<List<MealSeapp>>, t: Throwable) {
-            Log.d("MealSeappList",t.message!!)
+        override fun onFailure(call: Call<Category>, t: Throwable) {
+            TODO("Not yet implemented")
         }
 
 
     })
-    LazyColumn{
-        items(mealseapplist.value) {mealseapp ->
-            Card {
-                    CoilImage(imageModel = {mealseapp.strCategoryThumb})
-                    Text(text =mealseapp.strCategory )
 
 
-
-            }
-
-        }
-
-
-    }
-
-
-
-    /*LazyColumn{
-        items(mealseapplist.value){ mealseapp  ->
+    LazyColumn {
+        items(category.categories) { mealseapp ->
 
             //8
             Box {
-                Card (modifier = Modifier.padding(8.dp)){
-                    Column {
-                        CoilImage(imageModel = {mealseapp.strCategoryThumb})
+                Card(modifier = Modifier.padding(8.dp)) {
 
-                    }
-
-                    Column (modifier = Modifier.padding(16.dp)){
-                        Box(modifier = Modifier.background(
-                            color =MaterialTheme.colorScheme.onPrimary,
-                            shape = RoundedCornerShape(4.dp)
-                        )) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Box(
+                            modifier = Modifier.background(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                        ) {
                             Text(
                                 text = mealseapp.strCategory,
                                 fontWeight = FontWeight.Bold,
@@ -96,10 +82,17 @@ fun MealSeappList(){
                         }
                     }
 
+                    Column {
+                        CoilImage(imageModel = { mealseapp.strCategoryThumb })
+
+                    }
+
+
+
                 }
             }
         }
+    }
 
-    }*/
 
 }

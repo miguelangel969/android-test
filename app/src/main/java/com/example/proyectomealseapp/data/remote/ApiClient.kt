@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
 
-    private const val  API_BASE_URL ="https://www.themealdb.com/api/json/v1/1/categories.php"
+    private const val  API_BASE_URL ="https://www.themealdb.com/api/json/v1/1/categories.php/"
 
     private  var mealSeappInterface:MealSeappInterface? =null
 

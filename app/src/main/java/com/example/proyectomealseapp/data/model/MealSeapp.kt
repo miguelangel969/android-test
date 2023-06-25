@@ -6,7 +6,7 @@ data class MealSeapp (
 
     val idCategory: Int,
     val strCategory: String,
-    @SerializedName("img")
     val strCategoryThumb: String,
     val strCategoryDescription: String
+
 )
